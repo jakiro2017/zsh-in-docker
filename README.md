@@ -79,6 +79,29 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   customizable themes available for zsh. If you want the default Oh My Zsh theme, use the option
   `-t robbyrussell`
   
+## Run ohmyzsh for another user  
+ -  Change the `USER_TARGET` accordingly in `oh_myzsh_for_other_user.sh`, then run as root
+```  
+USER_TARGET=postgres
+USER_HOME_PATH=$(getent passwd $USER_TARGET | cut -d: -f6)
+chmod og+rx $HOME
+ ln -s $HOME/.zshrc   ${USER_HOME_PATH}/.zshrc
+ ln -s $HOME/.oh-my-zsh   ${USER_HOME_PATH}/.oh-my-zsh
+#  ln -s $HOME/.p10k.zsh   ${USER_HOME_PATH}/.p10k.zsh
+ #chsh -s $(which zsh)  $USER
+echo -e "ZSH_DISABLE_COMPFIX=\"true\"\n$(cat $HOME/.zshrc)" > $HOME/.zshrc
+filename=/etc/passwd
+search="${USER_HOME_PATH}:/bin/sh"
+replace="${USER_HOME_PATH}:/bin/zsh"
+sed -i "s#$search#$replace#" $filename
+```
+Dockerfile should look like this:
+```
+RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.1.2/zsh-in-docker.sh)"
+COPY ./oh_myzsh_for_other_user.sh /
+RUN chmod +x /oh_myzsh_for_other_user.sh
+RUN sh -x /oh_myzsh_for_other_user.sh
+```
 ## Liked it?
 
 If you like this script, feel free to thank me with a coffee (or a beer :wink:):
