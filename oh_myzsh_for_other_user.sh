@@ -1,5 +1,5 @@
 USER=root
-USER_HOME_PATH=~$USER
+USER_HOME_PATH=$(zsh -c "cd ~$(printf %q $USER) && pwd")
 sudo ln -s $HOME/.zshrc   ${USER_HOME_PATH}/.zshrc
 sudo ln -s $HOME/.oh-my-zsh   ${USER_HOME_PATH}/.oh-my-zsh
 sudo ln -s $HOME/.p10k.zsh   ${USER_HOME_PATH}/.p10k.zsh
